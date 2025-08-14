@@ -55,5 +55,14 @@ class AuthController {
       next(error);
     }
   }
+  async logout(req, res, next) {
+    try {
+      const { token } = req.body;
+      await this.#authService.deleteRefreshTokenByToken(token);
+      res.json({ message: "Logout successful" });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 module.exports = new AuthController();
