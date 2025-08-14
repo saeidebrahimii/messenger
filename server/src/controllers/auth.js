@@ -4,9 +4,11 @@ const { generateAccessToken, generateRefreshToken } = require("../utils/jwt");
 
 class AuthController {
   #userService;
+  #authService;
   constructor() {
     autoBind(this);
     this.#userService = require("../services/user");
+    this.#authService = require("../services/auth");
   }
   async login(req, res, next) {
     try {
@@ -21,6 +23,10 @@ class AuthController {
       }
       const accessToken = generateAccessToken({ userId: user._id });
       const refreshToken = generateRefreshToken({ userId: user._id });
+      await this.#authService.saveRefreshToken({
+        userId: user._id,
+        token: refreshToken,
+      });
       return res.json({
         message: "successfully login.",
         accessToken,
