@@ -5,7 +5,8 @@ function authGuard(req, res, next) {
     const authHeader = req.headers?.authorization;
     if (authHeader && authHeader.startsWith("Bearer ")) {
       try {
-        const decode = verifyAccessToken(authHeader);
+        const token = authHeader.split(" ")?.[1];
+        const decode = verifyAccessToken(token);
         req.user = { id: decode.userId };
         next();
       } catch (error) {
