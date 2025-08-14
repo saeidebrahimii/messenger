@@ -36,5 +36,24 @@ class AuthController {
       next(error);
     }
   }
+  async refreshToken(req, res, next) {
+    try {
+      const { token } = req.body;
+      const findRefreshToken = await this.#authService.getRefreshTokenByToken(
+        token
+      );
+      if (findRefreshToken) {
+        const accessToken = generateAccessToken({
+          userId: findRefreshToken.userId,
+        });
+        return res.json({ accessToken });
+      }
+      return res
+        .status(403)
+        .json({ message: "Refresh token invalid or revoked" });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 module.exports = new AuthController();
